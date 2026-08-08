@@ -1,0 +1,12 @@
+services:
+db:
+    volumes:
+      # Opción A: Montar una carpeta/archivo local de tu computadora al contenedor
+      #- ./datos_db:/var/lib/postgresql/data
+
+      # Opción B: Usar un volumen administrado por Docker
+      - datos_db:/var/lib/postgresql/data
+
+# Solo si usas la Opción B (volumen administrado), debes declararlo aquí abajo:
+volumes:
+  datos_db:

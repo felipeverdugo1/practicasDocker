@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres15_alpine_db
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=mi_clave_secreta
+    ports:
+      - "${PUERTO_HOST}:${PUERTO_CONTENEDOR}"
+
+    

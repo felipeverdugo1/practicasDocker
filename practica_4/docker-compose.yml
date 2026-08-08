@@ -1,0 +1,9 @@
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+
+    image: mi_web:1.0   # <-- Aquí le asignas el nombre y la etiqueta
+    ports:
+      - "8080:80"
