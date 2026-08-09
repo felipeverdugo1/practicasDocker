@@ -1,0 +1,15 @@
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+
+    image: desafio:1.0   # <-- Aquí le asignas el nombre y la etiqueta
+    ports:
+      - "8080:80"
+
+  app:
+    image: node:22-alpine
+    
+
+

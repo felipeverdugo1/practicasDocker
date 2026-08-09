@@ -1,0 +1,41 @@
+services:
+  db:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:5432"
+    restart: always
+    container_name: db-prueba
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+    volumes:
+      - datos_db:/var/lib/postgresql/data
+
+    healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+          interval: 2s
+          timeout: 2s
+          retries: 5
+
+  # Servicio temporal que automatiza la prueba
+  redis:
+    image: redis:7-alpine
+    container_name: mi-redis
+    depends_on:
+      db: 
+        condition: service_healthy
+    networks:
+      - red-app
+
+volumes:
+  datos_db:     
+
+networks:
+  red-app:
+    name: red-app
+    driver: bridge
+
