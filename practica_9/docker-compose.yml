@@ -1,15 +1,67 @@
 services:
-  web:
+  frontend:
     build: 
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
 
-    image: desafio:1.0   # <-- Aquí le asignas el nombre y la etiqueta
+    image: ngni-alpine
     ports:
-      - "8080:80"
+    - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - frontend_net
 
-  app:
+  backend:
     image: node:22-alpine
-    
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mi_api_python
+
+    networks:
+      - backend_net
+      - frontend_net
+    depends_on:
+      db-postgres:
+          condition: service_healthy
+      cache:
+          condition: service_started
 
 
+
+  db-postgres:
+    image: postgres:15-alpine
+    container_name: mi_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mydatabase
+
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    networks:
+      - backend_net
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
+  cache:
+    image: redis:alpine
+    container_name: cache-redis
+    networks:
+      - backend_net
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+    internal: true   # esta red no tiene salida a internet ni al host directamente
+
+
+volumes:
+  db_data:
